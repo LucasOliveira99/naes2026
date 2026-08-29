@@ -1,0 +1,81 @@
+{% extends "website/modelo2.html" %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'negociacao-list' %}">Negociações</a></li>
+<li class="breadcrumb-item active" aria-current="page">Detalhes</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-gradient-primary text-white py-3">
+                <h4 class="mb-0 fs-5 stencil d-flex align-items-center justify-content-center"><i
+                        class="bi bi-handshake me-2 fs-4"></i>Detalhes da Negociação</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-around align-items-center mb-4 text-center">
+                    <div style="flex:1">
+                        <div class="bg-light rounded-pill p-3 mb-2 mx-auto" style="width:fit-content">
+                            <i class="bi bi-shield-fill fs-2"></i>
+                        </div>
+                        <h4 class="mb-0">{{ object.proposta_1.nome_equipe }}</h4>
+                        <span class="text-muted small">Proposta A</span>
+                    </div>
+                    <div class="px-4">
+                        <div class="display-6 fw-bold">VS</div>
+                    </div>
+                    <div style="flex:1">
+                        <div class="bg-light rounded-pill p-3 mb-2 mx-auto" style="width:fit-content">
+                            <i class="bi bi-shield-fill fs-2"></i>
+                        </div>
+                        <h4 class="mb-0">{{ object.proposta_2.nome_equipe }}</h4>
+                        <span class="text-muted small">Proposta B</span>
+                    </div>
+                </div>
+
+                <hr class="text-muted opacity-25">
+
+                {% if object.valor_fechado %}
+                <div class="alert bg-primary-subtle border-0 text-center mb-4">
+                    <p class="text-muted small uppercase fw-bold mb-1">Valor Fechado</p>
+                    <h3 class="mb-0">{{ object.valor_fechado }}</h3>
+                    {% if object.proposta_vencedora %}
+                    <div class="mt-2">
+                        <span class="badge bg-success py-2 px-3 fw-normal">Vencedora: {{
+                            object.proposta_vencedora.nome_equipe }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="row g-4 mt-2">
+                    <div class="col-sm-3">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Veículo</p>
+                        <p class="mb-0">{{ object.veiculo }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Etapa</p>
+                        <p class="mb-0">{{ object.etapa.nome }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Categoria</p>
+                        <p class="mb-0">{{ object.categoria.nome }}</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Agendado para</p>
+                        <p class="mb-0">{% if object.data_hora %}{{ object.data_hora|date:"d/m/Y H:i" }}{% else %}-{%
+                            endif %}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 d-flex justify-content-between align-items-center">
+                <span class="text-muted small font-monospace">NegociaçãoID: #{{ object.pk }}</span>
+                <a href="#" class="btn btn-outline-secondary px-4" onclick="window.history.back()">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

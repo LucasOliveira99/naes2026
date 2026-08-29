@@ -1,0 +1,61 @@
+{% extends "website/modelo2.html" %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'proposta-list' %}">Propostas</a></li>
+<li class="breadcrumb-item active" aria-current="page">Detalhes</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div
+                class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-3">
+                <h4 class="mb-0 fs-5 stencil d-flex align-items-center"><i
+                        class="bi bi-file-earmark-text me-2 fs-4"></i>Proposta: {{ object.nome_equipe }}</h4>
+                {% if object.aprovada %}
+                <span class="badge bg-success">Aprovada</span>
+                {% else %}
+                <span class="badge bg-warning text-dark">Pendente</span>
+                {% endif %}
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Feirão</p>
+                        <p class="mb-0 fw-medium">{{ object.feirao.nome }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Categoria</p>
+                        <p class="mb-0">{{ object.categoria.nome }}</p>
+                    </div>
+                    {% if object.aprovada_em %}
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Aprovada em</p>
+                        <p class="mb-0 text-success">{{ object.aprovada_em|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    {% endif %}
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Qtd. Vendedores</p>
+                        <p class="mb-0">{{ object.vendedores.count }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Proposta por</p>
+                        <p class="mb-0">{{ object.proposta_por.username }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-1 text-muted small uppercase fw-bold">Data Proposta</p>
+                        <p class="mb-0">{{ object.proposta_em|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light p-3 d-flex justify-content-between align-items-center">
+                <span class="text-muted small font-monospace">Ref: #{{ object.pk }}</span>
+                <a href="#" class="btn btn-outline-secondary px-4" onclick="window.history.back()">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

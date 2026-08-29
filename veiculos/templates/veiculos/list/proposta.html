@@ -1,0 +1,98 @@
+{% extends "website/modelo2.html" %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Propostas</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="section-title mb-0">Propostas</h2>
+  <a href="{% url 'proposta-create' %}" class="btn btn-primary d-flex align-items-center gap-2">
+    <i class="bi bi-plus-lg"></i> Novo
+  </a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="kpi-card shadow-sm">
+      <div class="kpi-label">Total GERAL</div>
+      <div class="kpi-value">45</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="kpi-card shadow-sm text-success">
+      <div class="kpi-label">Aprovadas</div>
+      <div class="kpi-value text-success">38</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="kpi-card shadow-sm text-warning">
+      <div class="kpi-label">Pendentes</div>
+      <div class="kpi-value text-warning">7</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="kpi-card shadow-sm">
+      <div class="kpi-label">Canceladas</div>
+      <div class="kpi-value text-danger">2</div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm ">
+  <div class="card-body p-4 bg-white">
+    <table class="table table-arena mb-0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Equipe</th>
+          <th>Feirão</th>
+          <th>Categoria</th>
+          <th>Status</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proposta in object_list %}
+        <tr>
+          <td>{{ proposta.pk }}</td>
+          <td>{{ proposta.nome_equipe }}</td>
+          <td>{{ proposta.feirao.nome }}</td>
+          <td>{{ proposta.categoria.nome }}</td>
+          <td>
+            {% if proposta.aprovada %}
+            <span class="badge bg-success-subtle text-success border border-success">Aprovada</span>
+            {% else %}
+            <span class="badge bg-warning-subtle text-warning border border-warning">Pendente</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            <div class="dropdown">
+              <button class="btn btn-link btn-sm text-muted p-0" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{% url 'proposta-detail' proposta.pk %}"><i
+                      class="bi bi-eye me-2"></i>Ver</a></li>
+                <li><a class="dropdown-item" href="{% url 'proposta-update' proposta.pk %}"><i
+                      class="bi bi-pencil me-2"></i>Editar</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item text-danger" href="{% url 'proposta-delete' proposta.pk %}"><i
+                      class="bi bi-trash me-2"></i>Excluir</a></li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" class="text-center py-4 text-muted">Nenhuma proposta cadastrada.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% include "veiculos/includes/pagination.html" %}
+{% endblock content %}

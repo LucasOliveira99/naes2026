@@ -1,0 +1,179 @@
+{% extends "website/modelo2.html" %}
+{% load static %}
+
+{% block title %}Feirão Motors - Início{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Início</li>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-5">
+
+  <div class="col-lg-8">
+    <div class="p-5 rounded-4 shadow-sm h-100 d-flex flex-column justify-content-center"
+      style="background: linear-gradient(135deg, var(--clr-primary) 0%, #6b1512 100%); border: 1px solid var(--clr-border);">
+      <h1 class="display-4 stencil mb-3 text-white">BEM-VINDO AO FEIRÃO MOTORS</h1>
+      <p class="lead mb-4 text-white text-opacity-75">A plataforma definitiva para gestão de feirões de veículos.
+        Organize eventos, receba propostas e acompanhe negociações em tempo real.</p>
+      <div class="d-flex gap-3">
+        <a href="{% url 'feirao-list' %}" class="btn btn-light px-4 py-2 fw-bold text-primary">
+          <i class="bi bi-car-front me-2"></i>Ver Feirões
+        </a>
+        <a href="{% url 'sobre' %}" class="btn btn-outline-light px-4 py-2">
+          Saber Mais
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="row g-4 h-100">
+      <div class="col-12">
+        <div class="card h-100 border-0 shadow-sm bg-surface-alt">
+          <div class="card-body p-4 d-flex align-items-center gap-3">
+            <div class="feature-icon bg-primary bg-opacity-10 flex-shrink-0"
+              style="font-size: 2rem; color: var(--clr-primary);">
+              <i class="bi bi-shop"></i>
+            </div>
+            <div>
+              <p class="text-muted mb-1 text-uppercase small fw-semibold">Feirões</p>
+              <h3 class="display-6 stencil mb-1">{{ total_feiroes }}</h3>
+              <p class="mb-0 text-muted">Total de feirões de veículos cadastrados.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body p-4 d-flex align-items-center gap-3">
+            <div class="feature-icon bg-primary bg-opacity-10 flex-shrink-0"
+              style="font-size: 2rem; color: var(--clr-primary);">
+              <i class="bi bi-unlock-fill"></i>
+            </div>
+            <div>
+              <p class="text-muted mb-1 text-uppercase small fw-semibold">Propostas Abertas</p>
+              <h3 class="display-6 stencil mb-1">{{ total_abertos }}</h3>
+              <p class="mb-0 text-muted">Feirões com prazo de propostas ainda ativo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-12 d-flex align-items-center justify-content-between">
+    <h3 class="stencil mb-0">Últimos Feirões</h3>
+    <span class="badge text-bg-light border"
+      style="color: var(--clr-primary); border-color: var(--clr-border) !important;">Top 5 recentes</span>
+  </div>
+  {% for c in ultimos_feiroes %}
+  <div class="col-md-6 col-xl-4">
+    <div class="card h-100 border-0 shadow-sm bg-surface-alt">
+      <div class="card-body p-4 d-flex flex-column">
+        <div class="d-flex align-items-start justify-content-between mb-3 gap-2">
+          <h5 class="stencil mb-0">{{ c.nome }}</h5>
+          <span class="badge rounded-pill"
+            style="background: rgba(110, 84, 255, 0.12); color: var(--clr-primary);">Recente</span>
+        </div>
+        <p class="text-muted mb-2 d-flex align-items-center gap-2">
+          <i class="bi bi-geo-alt"></i>{{ c.filial }}
+        </p>
+        <p class="text-muted mb-4 d-flex align-items-center gap-2">
+          <i class="bi bi-calendar-event"></i>{{ c.data|date:"d/m/Y" }}
+        </p>
+        <div class="mt-auto">
+          <a href="{% url 'feirao-list' %}" class="btn btn-sm btn-outline-primary">Ver no painel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4 text-muted">
+        Nenhum feirão cadastrado até o momento.
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-12 d-flex align-items-center justify-content-between">
+    <h3 class="stencil mb-0">Propostas Abertas</h3>
+    <span class="badge text-bg-light border"
+      style="color: var(--clr-primary); border-color: var(--clr-border) !important;">{{ total_abertos }} ativo(s)</span>
+  </div>
+  {% for c in feiroes_abertos %}
+  <div class="col-md-6">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body p-4 d-flex flex-column">
+        <div class="d-flex align-items-start justify-content-between mb-3 gap-2">
+          <h5 class="stencil mb-0">{{ c.nome }}</h5>
+          <span class="badge rounded-pill text-bg-success">Aberto</span>
+        </div>
+        <p class="text-muted mb-2 d-flex align-items-center gap-2">
+          <i class="bi bi-geo-alt"></i>{{ c.filial }}
+        </p>
+        <p class="text-muted mb-2 d-flex align-items-center gap-2">
+          <i class="bi bi-calendar-check"></i>Evento: {{ c.data|date:"d/m/Y" }}
+        </p>
+        <p class="text-muted mb-4 d-flex align-items-center gap-2">
+          <i class="bi bi-clock"></i>Propostas até {{ c.data_limite_propostas|date:"d/m/Y H:i" }}
+        </p>
+        <div class="mt-auto">
+          <a href="{% url 'feirao-list' %}" class="btn btn-sm btn-primary">Enviar proposta</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="card border-0 shadow-sm bg-surface-alt">
+      <div class="card-body p-4 text-muted d-flex align-items-center gap-2">
+        <i class="bi bi-info-circle"></i>Nenhum feirão com propostas abertas no momento.
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="feature-icon bg-primary bg-opacity-10 mb-3" style="font-size: 2rem; color: var(--clr-primary);">
+          <i class="bi bi-tags"></i>
+        </div>
+        <h5 class="stencil mb-2">Múltiplas Categorias</h5>
+        <p class="text-muted mb-0">Suporte para diversos tipos de veículo, desde Sedans até SUVs e Picapes.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="feature-icon bg-primary bg-opacity-10 mb-3" style="font-size: 2rem; color: var(--clr-primary);">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <h5 class="stencil mb-2">Gestão de Propostas</h5>
+        <p class="text-muted mb-0">Controle total sobre propostas, vendedores e equipes por filial.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="feature-icon bg-primary bg-opacity-10 mb-3" style="font-size: 2rem; color: var(--clr-primary);">
+          <i class="bi bi-calendar-event"></i>
+        </div>
+        <h5 class="stencil mb-2">Etapas e Negociações</h5>
+        <p class="text-muted mb-0">Cronogramas claros e acompanhamento de cada negociação do feirão.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

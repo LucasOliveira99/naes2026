@@ -1,0 +1,274 @@
+{% extends "website/modelo2.html" %}
+{% load static %}
+
+{% block title %}Feirão Motors - Sobre{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Sobre</li>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-5 g-4">
+  <div class="col-lg-8">
+    <div class="card p-4 p-md-5 h-100 border-0 shadow-sm"
+      style="background: linear-gradient(135deg, var(--clr-surface) 0%, var(--clr-primary-l) 100%);">
+      <h1 class="stencil mb-4" style="color: var(--clr-primary);">SOBRE O FEIRÃO MOTORS</h1>
+      <p class="lead mb-4 fw-medium">
+        O Feirão Motors é uma plataforma desenvolvida para organizar feirões de venda de veículos entre várias filiais.
+      </p>
+      <div class="prose text-secondary">
+        <p>
+          Nossa missão é fornecer uma ferramenta robusta e intuitiva para que organizadores e equipes de vendas possam
+          focar no que realmente importa: fechar o melhor negócio para o cliente.
+        </p>
+        <p class="mb-0">
+          Com o crescimento constante do mercado automotivo, a necessidade de uma gestão profissional tornou-se
+          evidente. O Feirão Motors centraliza propostas, gerenciamento de categorias de veículos, etapas dos feirões e
+          negociações finais.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow-sm mb-4 border-0">
+      <div class="card-body p-4">
+        <h5 class="stencil mb-3" style="color: var(--clr-primary); font-size: 1rem;"><i
+            class="bi bi-bullseye me-2"></i>Nossa Missão</h5>
+        <p class="text-muted mb-0">
+          Conectar vendedores e clientes em uma experiência ágil, promovendo negociações justas e transparentes.
+        </p>
+      </div>
+    </div>
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4 text-center">
+        <div class="display-4 mb-2">🚀</div>
+        <h5 class="stencil" style="font-size: 1rem;">Transformando Negócios</h5>
+        <p class="text-muted mb-0">Conectando compradores aos melhores veículos da região.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── Recursos Principais ── -->
+<section class="py-5 py-lg-6">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="stencil mb-3">O Que Você Pode Fazer</h2>
+      <p class="text-secondary" style="font-size:1.05rem; max-width:500px; margin:0 auto">
+        Tudo que você precisa para gerenciar e participar de feirões de veículos
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Card 1 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 text-center">
+          <div class="feature-icon bg-primary bg-opacity-10 mx-auto mb-3">
+            <i class="bi bi-shop fs-4 text-primary"></i>
+          </div>
+          <h5 class="stencil mb-2">Criar Feirões</h5>
+          <p class="text-secondary mb-0">
+            Organize eventos de venda com diferentes categorias de veículos e prazos personalizados
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 text-center">
+          <div class="feature-icon bg-success bg-opacity-10 mx-auto mb-3">
+            <i class="bi bi-person-plus-fill fs-4 text-success"></i>
+          </div>
+          <h5 class="stencil mb-2">Enviar Propostas</h5>
+          <p class="text-secondary mb-0">
+            Registre suas equipes de vendedores e proponha negócios para os clientes
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 text-center">
+          <div class="feature-icon bg-info bg-opacity-10 mx-auto mb-3">
+            <i class="bi bi-bar-chart-line fs-4 text-info"></i>
+          </div>
+          <h5 class="stencil mb-2">Acompanhar Negociações</h5>
+          <p class="text-secondary mb-0">
+            Visualize etapas, valores fechados e desempenho em tempo real
+          </p>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 text-center">
+          <div class="feature-icon bg-warning bg-opacity-10 mx-auto mb-3">
+            <i class="bi bi-chat-dots-fill fs-4 text-warning"></i>
+          </div>
+          <h5 class="stencil mb-2">Conectar Filiais</h5>
+          <p class="text-secondary mb-0">
+            Integre vendedores e clientes de diferentes filiais em um só lugar
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Como Funciona ── -->
+<section class="py-5 py-lg-6 bg-surface">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="stencil mb-3">Começar é Fácil</h2>
+    </div>
+
+    <div class="row g-4 align-items-stretch">
+      <!-- Passo 1 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 border-2 border-primary shadow-sm transition-hover">
+          <div class="d-flex align-items-center mb-3">
+            <span
+              class="badge bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+              style="width:30px; height:30px;">1</span>
+            <h6 class="stencil mb-0">Crie sua Conta</h6>
+          </div>
+          <p class="text-secondary mb-0">Registre-se rapidamente e acesse a plataforma</p>
+        </div>
+      </div>
+
+      <!-- Passo 2 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 border-2 border-success shadow-sm transition-hover">
+          <div class="d-flex align-items-center mb-3">
+            <span
+              class="badge bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+              style="width:30px; height:30px;">2</span>
+            <h6 class="stencil mb-0">Escolha um Feirão</h6>
+          </div>
+          <p class="text-secondary mb-0">Explore feirões abertos para enviar propostas</p>
+        </div>
+      </div>
+
+      <!-- Passo 3 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 border-2 border-info shadow-sm transition-hover">
+          <div class="d-flex align-items-center mb-3">
+            <span
+              class="badge bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+              style="width:30px; height:30px;">3</span>
+            <h6 class="stencil mb-0">Monte sua Equipe</h6>
+          </div>
+          <p class="text-secondary mb-0">Reúna seus vendedores e registre a proposta</p>
+        </div>
+      </div>
+
+      <!-- Passo 4 -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 h-100 border-2 border-warning shadow-sm transition-hover">
+          <div class="d-flex align-items-center mb-3">
+            <span
+              class="badge bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+              style="width:30px; height:30px;">4</span>
+            <h6 class="stencil mb-0">Feche o Negócio</h6>
+          </div>
+          <p class="text-secondary mb-0">Negocie e conclua a venda do veículo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Números & Impacto ── -->
+<section class="py-5 py-lg-6 bg-petrol rounded">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-sm-6 col-lg-3">
+        <div>
+          <h3 class="stencil text-white mb-1" style="font-size:2.5rem">8+</h3>
+          <p style="color:rgba(255,255,255,.7); ">Feirões Anuais</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div>
+          <h3 class="stencil text-white mb-1" style="font-size:2.5rem">200+</h3>
+          <p style="color:rgba(255,255,255,.7); ">Veículos Anunciados</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div>
+          <h3 class="stencil text-white mb-1" style="font-size:2.5rem">15+</h3>
+          <p style="color:rgba(255,255,255,.7); ">Filiais Parceiras</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div>
+          <h3 class="stencil text-white mb-1" style="font-size:2.5rem">∞</h3>
+          <p style="color:rgba(255,255,255,.7); ">Possibilidades</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Sobre o Feirão Motors ── -->
+<section class="py-5 py-lg-6">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <h2 class="stencil mb-3">Nossa História</h2>
+        <p class="text-secondary mb-4" style="font-size:1.05rem; line-height:1.8;">
+          O Feirão Motors nasceu para simplificar a organização de feirões de venda de
+          veículos entre várias filiais. Nosso compromisso é com inovação, transparência
+          e o melhor negócio para vendedores e clientes.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-white text-primary border border-primary" style="padding:.55rem 1rem">
+            <i class="bi bi-car-front me-1"></i>Veículos
+          </span>
+          <span class="badge bg-white text-primary border border-primary" style="padding:.55rem 1rem">
+            <i class="bi bi-lightning-charge me-1"></i>Inovação
+          </span>
+          <span class="badge bg-white text-primary border border-primary" style="padding:.55rem 1rem">
+            <i class="bi bi-handshake me-1"></i>Negociação
+          </span>
+          <span class="badge bg-white text-primary border border-primary" style="padding:.55rem 1rem">
+            <i class="bi bi-star me-1"></i>Excelência
+          </span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card p-5">
+          <blockquote class="mb-0" style="border-left:4px solid var(--clr-primary); padding-left:1.5rem;">
+            <p class="fw-semibold mb-3 text-primary" style="font-size:1.1rem">
+              "O melhor negócio é aquele em que vendedor e cliente saem satisfeitos com o carro."
+            </p>
+            <footer class="text-secondary">
+              — Feirão Motors
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA Final ── -->
+<section class="py-5 py-lg-6 bg-petrol-darker text-white rounded">
+  <div class="container text-center">
+    <h2 class="stencil text-white mb-3">Pronto para Negociar?</h2>
+    <p class="mb-4" style="color:rgba(255,255,255,.75); font-size:1.05rem; max-width:500px; margin:0 auto">
+      Cadastre-se agora e participe dos maiores feirões de veículos.
+    </p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      <a href="{% url 'index' %}" class="btn btn-light fw-bold px-5 rounded-2">
+        <i class="bi bi-play-fill me-1"></i>Explorar Agora
+      </a>
+      <a href="{% url 'contato' %}" class="btn btn-outline-light px-5 rounded-2">
+        <i class="bi bi-question-circle me-1"></i>Dúvidas?
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
