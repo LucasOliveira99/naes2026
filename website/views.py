@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
 from veiculos.models import Feirao
 
 # import timezone do django
@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import PasswordChangeView
+from .forms import CadastroForm
 
 
 class IndexView(TemplateView):
@@ -38,6 +39,16 @@ class ContatoView(TemplateView):
     
 class SobreView(TemplateView):
     template_name = "website/sobre.html"
+
+
+class CadastroView(FormView):
+    template_name = "website/cadastro.html"
+    form_class = CadastroForm
+    success_url = reverse_lazy("index")
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
 class AlterarSenhaView(SuccessMessageMixin, PasswordChangeView):

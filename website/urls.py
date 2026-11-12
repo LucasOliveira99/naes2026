@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import IndexView, ContatoView, SobreView, AlterarSenhaView
+from .views import CadastroView, IndexView, ContatoView, SobreView, AlterarSenhaView
 
 # Importas as views para gerenciamento de usuários
 from django.contrib.auth.views import (
@@ -12,7 +12,8 @@ urlpatterns = [
     path("", IndexView.as_view(), name="index"),
     path("contato/", ContatoView.as_view(), name="contato"),
     path("sobre/", SobreView.as_view(), name="sobre"),
-
+    path("cadastro/", CadastroView.as_view(), name="cadastro"),
+    
     # URL para login e usuários reutiliza o meu template de form e recebe o texto do titulo e botão
     path("login/", LoginView.as_view(
             template_name="veiculos/form.html",
