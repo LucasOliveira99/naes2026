@@ -279,7 +279,7 @@ class FeiraoDelete(GroupRequiredMixin, DeleteView):
         return super().get_queryset().filter(cadastrado_por=self.request.user)
 
 
-class FeiraoList(ListView):
+class FeiraoList(BaseLoginMixin, ListView):
     model = Feirao
     template_name = 'veiculos/list/feirao.html'
     paginate_by = 30
