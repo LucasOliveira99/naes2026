@@ -1,17 +1,10 @@
 
-from django.urls import path
+from django.urls import include, path
 from .views import (
     AlterarSenhaView,
     CadastroView,
-    ConfiguracaoIAView,
-    ConfiguracaoIAUsuariosView,
     ContatoView,
-    GeminiChatView,
-    GeminiChatAjaxView,
     IndexView,
-    MeuConsumoIAView,
-    RequisicaoIADetailView,
-    RequisicoesIAView,
     SobreView,
 )
 
@@ -22,16 +15,10 @@ from django.contrib.auth.views import (
 )
 
 urlpatterns = [
+    path("", include("ia.urls")),
     path("", IndexView.as_view(), name="index"),
     path("contato/", ContatoView.as_view(), name="contato"),
     path("sobre/", SobreView.as_view(), name="sobre"),
-    path("gemini/", GeminiChatView, name="gemini-chat"),
-    path("gemini/api/", GeminiChatAjaxView, name="gemini-chat-api"),
-    path("configuracao-ia/", ConfiguracaoIAView, name="configuracao-ia"),
-    path("configuracao-ia/usuarios/", ConfiguracaoIAUsuariosView, name="configuracao-ia-usuarios"),
-    path("ia/requisicoes/", RequisicoesIAView, name="requisicoes-ia"),
-    path("ia/requisicoes/<int:pk>/", RequisicaoIADetailView, name="requisicao-ia-detail"),
-    path("ia/meu-consumo/", MeuConsumoIAView, name="meu-consumo-ia"),
     path("cadastro/", CadastroView.as_view(), name="cadastro"),
     
     # URL para login e usuários reutiliza o meu template de form e recebe o texto do titulo e botão

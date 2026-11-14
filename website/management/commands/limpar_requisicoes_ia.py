@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from website.gemini import limpar_requisicoes_antigas
+from ia.gemini import limpar_requisicoes_antigas
 
 
 class Command(BaseCommand):

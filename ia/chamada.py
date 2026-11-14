@@ -1,6 +1,6 @@
 """Porta pública única para chamadas de IA."""
 
-from website.gemini import (
+from .gemini import (
     CotaIAExcedida,
     ConfiguracaoIAInvalida,
     RespostaIA,

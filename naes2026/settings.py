@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     # Ativar meus apps
     'website.apps.WebsiteConfig',
+    'ia.apps.IAConfig',
     'veiculos.apps.VeiculosConfig',
 
     # Ativar o crispy forms para renderiar os forms

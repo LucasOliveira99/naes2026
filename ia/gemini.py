@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from ia.arquivos import metadados_arquivos, preparar_pedido
 from ia.provedores import PROVEDORES
-from .models import ConfiguracaoIA, ConfiguracaoIAUsuario, ConsumoIA, RequisicaoIA
+from ia.models import ConfiguracaoIA, ConfiguracaoIAUsuario, ConsumoIA, RequisicaoIA
 
 load_dotenv()
 

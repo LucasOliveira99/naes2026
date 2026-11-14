@@ -8,9 +8,9 @@ from django.utils import timezone
 from django.urls import reverse
 
 from veiculos.models import CategoriaVeiculo, Etapa, Feirao, Filial, Vendedor
-from website.gemini import RespostaIA
-from website.models import ConversaIA
-from website.services import responder_chat
+from ia.gemini import RespostaIA
+from ia.models import ConversaIA
+from ia.services import responder_chat
 
 
 class HomePublicaTest(TestCase):
@@ -534,7 +534,7 @@ class GeminiChatAjaxTest(TestCase):
             motivo_fim="STOP",
         )
 
-        with patch("website.views.responder_chat", return_value=resposta_ia):
+        with patch("ia.views.responder_chat", return_value=resposta_ia):
             resposta = self.client.post(
                 reverse("gemini-chat-api"),
                 data=json.dumps({"message": "Olá"}),
@@ -571,7 +571,7 @@ class GeminiChatAjaxTest(TestCase):
             "A conversa informada é inválida.",
         )
 
-    @patch("website.services.chamar_ia")
+    @patch("ia.services.chamar_ia")
     def test_service_envia_apenas_as_cinco_mensagens_mais_recentes(self, chamar_ia_mock):
         historico = [
             {"role": "user", "text": f"Mensagem {numero}"}
@@ -589,3 +589,28 @@ class GeminiChatAjaxTest(TestCase):
             [mensagem.texto for mensagem in pedido.historico],
             ["Mensagem 2", "Mensagem 3", "Mensagem 4", "Mensagem 5", "Mensagem 6"],
         )
+
+
+class IAAdminGroupAccessTest(TestCase):
+    def test_grupo_administrador_acessa_paineis_de_ia(self):
+        grupo = Group.objects.create(name="Administrador")
+        usuario = User.objects.create_user(username="admin-ia")
+        usuario.groups.add(grupo)
+        self.client.force_login(usuario)
+
+        for nome_url in ("configuracao-ia", "requisicoes-ia"):
+            with self.subTest(view=nome_url):
+                resposta = self.client.get(reverse(nome_url))
+                self.assertEqual(resposta.status_code, 200)
+
+    def test_superusuario_sem_grupo_nao_acessa_paineis_de_ia(self):
+        usuario = User.objects.create_superuser(
+            username="superuser-sem-grupo",
+            password="senha-segura-123",
+        )
+        self.client.force_login(usuario)
+
+        for nome_url in ("configuracao-ia", "requisicoes-ia"):
+            with self.subTest(view=nome_url):
+                resposta = self.client.get(reverse(nome_url))
+                self.assertEqual(resposta.status_code, 302)

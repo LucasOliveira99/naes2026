@@ -2,7 +2,7 @@ import bleach
 import markdown
 
 from ia.chamada import chamar_ia
-from website.gemini import MensagemIA, PedidoIA, PROMPT_VERSION
+from .gemini import MensagemIA, PedidoIA, PROMPT_VERSION
 
 
 MARKDOWN_TAGS_PERMITIDAS = {
