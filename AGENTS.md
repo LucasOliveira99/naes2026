@@ -17,6 +17,17 @@ Este é um projeto Django.
 
 - Para escrever a mensagem de um commit, use a skill `commit-padrao`.
 
+## Skills por workflow
+
+As skills ficam em `.github/skills/` e complementam estas regras quando a
+tarefa corresponder ao gatilho:
+
+- `app-ia`: implementar ou revisar a integração de IA do projeto.
+- `django-model-migrations`: alterar models ou o schema do banco.
+- `django-crud`: implementar ou modificar fluxos CRUD, filtros e autorização.
+- `django-testing`: criar testes, corrigir regressões ou validar mudanças.
+- `commit-padrao`: escrever mensagens de commit.
+
 ## Regras por assunto
 
 - Backend Django/Python: `.github/instructions/backend.instructions.md`
