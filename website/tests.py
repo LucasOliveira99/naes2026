@@ -480,6 +480,11 @@ class HomePublicaTest(TestCase):
         resposta_tela = self.client.get(url_edicao)
         self.assertEqual(resposta_tela.status_code, 404)
 
+        resposta_detalhe = self.client.get(
+            reverse("feirao-detail", kwargs={"pk": feirao_b.pk})
+        )
+        self.assertEqual(resposta_detalhe.status_code, 404)
+
         resposta_envio = self.client.post(
             url_edicao,
             {
@@ -528,6 +533,29 @@ class GeminiChatAjaxTest(TestCase):
         conversa = ConversaIA.objects.get(usuario=usuario)
         self.assertEqual(len(conversa.mensagens), 2)
         self.assertEqual(conversa.mensagens[0]["text"], "Olá")
+
+    def test_endpoint_nao_acessa_conversa_de_outro_usuario(self):
+        usuario = User.objects.create_user(username="usuario")
+        outro_usuario = User.objects.create_user(username="outro-usuario")
+        conversa = ConversaIA.objects.create(
+            usuario=outro_usuario,
+            mensagens=[],
+        )
+        self.client.force_login(usuario)
+
+        resposta = self.client.post(
+            reverse("gemini-chat-api"),
+            data=json.dumps(
+                {"conversation_id": conversa.pk, "message": "Acesso indevido"}
+            ),
+            content_type="application/json",
+        )
+
+        self.assertEqual(resposta.status_code, 400)
+        self.assertEqual(
+            resposta.json()["erro"],
+            "A conversa informada é inválida.",
+        )
 
     @patch("website.services.chamar_ia")
     def test_service_envia_apenas_as_cinco_mensagens_mais_recentes(self, chamar_ia_mock):

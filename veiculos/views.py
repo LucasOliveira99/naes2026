@@ -328,9 +328,12 @@ class FeiraoList(FilteredListMixin, BaseLoginMixin, ListView):
         context["total_filtrado"] = self.get_queryset().count()
         return context
 
-class FeiraoDetail(DetailView):
+class FeiraoDetail(BaseLoginMixin, DetailView):
     model = Feirao
     template_name = 'veiculos/detail/feirao.html'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(cadastrado_por=self.request.user)
 
 
 ##########################################################
