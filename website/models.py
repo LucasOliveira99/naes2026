@@ -4,6 +4,23 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 
+class ConversaIA(models.Model):
+	usuario = models.ForeignKey(
+		settings.AUTH_USER_MODEL,
+		on_delete=models.CASCADE,
+		related_name="conversas_ia",
+	)
+	mensagens = models.JSONField(default=list)
+	criada_em = models.DateTimeField(auto_now_add=True)
+	atualizada_em = models.DateTimeField(auto_now=True)
+
+	class Meta:
+		ordering = ["-atualizada_em"]
+		indexes = [
+			models.Index(fields=["usuario", "-atualizada_em"]),
+		]
+
+
 class RequisicaoIA(models.Model):
 	SITUACAO_INICIADA = "iniciada"
 	SITUACAO_SUCESSO = "sucesso"

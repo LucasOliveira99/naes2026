@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
@@ -7,6 +8,9 @@ from django.utils import timezone
 from django.urls import reverse
 
 from veiculos.models import CategoriaVeiculo, Etapa, Feirao, Filial, Vendedor
+from website.gemini import RespostaIA
+from website.models import ConversaIA
+from website.services import responder_chat
 
 
 class HomePublicaTest(TestCase):
@@ -494,3 +498,52 @@ class HomePublicaTest(TestCase):
         self.assertEqual(feirao_b.data.isoformat(), "2026-11-20")
         self.assertEqual(feirao_b.cadastrado_por, usuario_b)
         self.assertEqual(list(feirao_b.categorias.all()), [categoria])
+
+
+class GeminiChatAjaxTest(TestCase):
+    def test_endpoint_persiste_conversa_e_sanitiza_markdown(self):
+        usuario = User.objects.create_user(username="usuario")
+        self.client.force_login(usuario)
+        resposta_ia = RespostaIA(
+            texto="**Olá** <script>alert(1)</script>",
+            dados=None,
+            tokens_entrada=1,
+            tokens_saida=2,
+            tokens_raciocinio=0,
+            tokens_total=3,
+            modelo="falso",
+            motivo_fim="STOP",
+        )
+
+        with patch("website.views.responder_chat", return_value=resposta_ia):
+            resposta = self.client.post(
+                reverse("gemini-chat-api"),
+                data=json.dumps({"message": "Olá"}),
+                content_type="application/json",
+            )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(resposta.json()["html"], "<p><strong>Olá</strong> alert(1)</p>")
+        self.assertNotIn("<script>", resposta.json()["html"])
+        conversa = ConversaIA.objects.get(usuario=usuario)
+        self.assertEqual(len(conversa.mensagens), 2)
+        self.assertEqual(conversa.mensagens[0]["text"], "Olá")
+
+    @patch("website.services.chamar_ia")
+    def test_service_envia_apenas_as_cinco_mensagens_mais_recentes(self, chamar_ia_mock):
+        historico = [
+            {"role": "user", "text": f"Mensagem {numero}"}
+            for numero in range(7)
+        ]
+
+        responder_chat(
+            usuario=User.objects.create_user(username="usuario"),
+            mensagem="Nova mensagem",
+            historico=historico,
+        )
+
+        pedido = chamar_ia_mock.call_args.kwargs["montar_pedido"]()
+        self.assertEqual(
+            [mensagem.texto for mensagem in pedido.historico],
+            ["Mensagem 2", "Mensagem 3", "Mensagem 4", "Mensagem 5", "Mensagem 6"],
+        )

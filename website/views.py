@@ -1,3 +1,5 @@
+import json
+import logging
 from django.views.generic import FormView, TemplateView
 from datetime import timedelta
 from django.contrib.auth.decorators import login_required
@@ -5,8 +7,9 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 from veiculos.models import Feirao
 
@@ -19,13 +22,18 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import PasswordChangeView
 from .forms import CadastroForm, ConfiguracaoIAForm, ConfiguracaoIAUsuarioForm
 from .gemini import (
+	CotaIAExcedida,
+	ConfiguracaoIAInvalida,
 	RespostaInvalida,
     get_configuracao_ia,
 	limpar_cache_configuracao_ia,
 	testar_conexao,
 )
-from .models import ConfiguracaoIAUsuario, ConsumoIA, RequisicaoIA
-from .services import responder_chat
+from .models import ConfiguracaoIAUsuario, ConsumoIA, ConversaIA, RequisicaoIA
+from .services import renderizar_markdown_seguro, responder_chat
+
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(TemplateView):
@@ -87,50 +95,106 @@ def ConfiguracaoIAView(request):
 @login_required
 @require_http_methods(["GET", "POST"])
 def GeminiChatView(request):
-    history = request.session.get("gemini_chat_history", [])
-    error = None
+    conversa = ConversaIA.objects.filter(usuario=request.user).first()
+    if request.method == "POST" and request.POST.get("action") == "clear":
+        if conversa:
+            conversa.delete()
+        return redirect("gemini-chat")
 
-    if request.method == "POST":
-        if request.POST.get("action") == "clear":
-            request.session.pop("gemini_chat_history", None)
-            history = []
-        else:
-            message = request.POST.get("message", "").strip()
-            if message:
-                try:
-                    response = responder_chat(
-                        usuario=request.user,
-                        mensagem=message,
-                        historico=history,
-                    )
-                    if isinstance(response, RespostaInvalida):
-                        error = "O Gemini devolveu uma resposta fora do formato esperado."
-                    else:
-                        history = [
-                            *history,
-                            {"role": "user", "text": message, "display_text": message},
-                            {
-                                "role": "model",
-                                "text": response.texto,
-                                "data": response.dados.model_dump() if response.dados else {},
-                                "display_text": response.dados.resposta if response.dados else response.texto,
-                                "usage": {
-                                    "prompt_token_count": response.tokens_entrada,
-                                    "candidates_token_count": response.tokens_saida,
-                                    "thoughts_token_count": response.tokens_raciocinio,
-                                    "total_token_count": response.tokens_total,
-                                    "model": response.modelo,
-                                    "finish_reason": response.motivo_fim,
-                                },
-                            },
-                        ][-20:]
-                        request.session["gemini_chat_history"] = history
-                except Exception:
-                    error = "Não foi possível conversar com o Gemini agora. Tente novamente."
-
+    historico = conversa.mensagens if conversa else []
+    historico = [
+        {
+            **mensagem,
+            "html": (
+                renderizar_markdown_seguro(mensagem["text"])
+                if mensagem.get("role") == "model"
+                else ""
+            ),
+        }
+        for mensagem in historico
+    ]
     return render(request, "website/gemini_chat.html", {
-        "history": history,
-        "error": error,
+        "history": historico,
+        "conversation_id": conversa.pk if conversa else "",
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def GeminiChatAjaxView(request):
+    try:
+        dados = json.loads(request.body) if request.content_type.startswith("application/json") else request.POST
+    except json.JSONDecodeError:
+        return JsonResponse({"erro": "O corpo da requisição não é um JSON válido."}, status=400)
+
+    mensagem = str(dados.get("message", "")).strip()
+    if not mensagem:
+        return JsonResponse({"erro": "Digite uma mensagem antes de enviar."}, status=400)
+    if len(mensagem) > 4000:
+        return JsonResponse({"erro": "A mensagem deve ter no máximo 4000 caracteres."}, status=400)
+
+    conversation_id = dados.get("conversation_id")
+    conversa = None
+    if conversation_id:
+        try:
+            conversa = get_object_or_404(
+                ConversaIA,
+                pk=int(conversation_id),
+                usuario=request.user,
+            )
+        except (Http404, TypeError, ValueError):
+            return JsonResponse({"erro": "A conversa informada é inválida."}, status=400)
+
+    historico = conversa.mensagens if conversa else []
+    try:
+        response = responder_chat(
+            usuario=request.user,
+            mensagem=mensagem,
+            historico=historico,
+        )
+        if isinstance(response, RespostaInvalida):
+            return JsonResponse(
+                {"erro": "O Gemini devolveu uma resposta fora do formato esperado."},
+                status=502,
+            )
+    except CotaIAExcedida:
+        return JsonResponse({"erro": "O limite de uso da IA foi atingido."}, status=429)
+    except ConfiguracaoIAInvalida:
+        return JsonResponse({"erro": "A IA não está configurada para uso."}, status=503)
+    except Exception:
+        logger.exception("Falha ao responder conversa IA via AJAX")
+        return JsonResponse(
+            {"erro": "Não foi possível conversar com o Gemini agora. Tente novamente."},
+            status=503,
+        )
+
+    texto_resposta = response.dados.resposta if response.dados else response.texto
+    mensagem_usuario = {"role": "user", "text": mensagem}
+    mensagem_modelo = {
+        "role": "model",
+        "text": texto_resposta,
+        "usage": {
+            "prompt_token_count": response.tokens_entrada,
+            "candidates_token_count": response.tokens_saida,
+            "thoughts_token_count": response.tokens_raciocinio,
+            "total_token_count": response.tokens_total,
+            "model": response.modelo,
+            "finish_reason": response.motivo_fim,
+        },
+    }
+    if conversa is None:
+        conversa = ConversaIA.objects.create(
+            usuario=request.user,
+            mensagens=[mensagem_usuario, mensagem_modelo],
+        )
+    else:
+        conversa.mensagens = [*historico, mensagem_usuario, mensagem_modelo]
+        conversa.save(update_fields=["mensagens", "atualizada_em"])
+
+    return JsonResponse({
+        "conversation_id": conversa.pk,
+        "message": mensagem_modelo,
+        "html": renderizar_markdown_seguro(texto_resposta),
     })
 
 
