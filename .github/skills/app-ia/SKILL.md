@@ -30,6 +30,26 @@ seja carregado sob demanda pela skill. Não coloque segredos nesses diretórios.
 Campos opcionais dependem da ferramenta que carrega a skill. Não remova os
 campos portáveis `name` e `description` ao adicionar metadados específicos.
 
+## Boas praticas da skill
+
+- Escreva `description` como gatilho: comece com `Use ao` ou `Use para` e
+	descreva a situacao concreta em que a skill deve ser carregada.
+- Mantenha `name` igual ao nome da pasta, em minusculas e com hifens.
+- Mantenha este arquivo enxuto. Mova material longo para `references/` e use
+	`scripts/` ou `assets/` somente quando houver necessidade real.
+- Nunca coloque chaves, tokens, senhas ou dados pessoais na skill.
+- Trate a skill como codigo: revise as alteracoes e valide o frontmatter depois
+	de editar.
+
+## Subagentes e MCP
+
+- Use um subagente de exploracao somente leitura quando a investigacao do
+	repositorio puder ser separada da implementacao.
+- Use MCP quando a tarefa precisar conversar com sistemas externos, como
+	GitHub, banco, Figma ou APIs internas; ele nao substitui `chamar_ia`.
+- Credenciais de MCP ficam em configuracao de ambiente, nunca em skills,
+	prompts, logs ou arquivos versionados.
+
 ## Entrada unica
 
 Toda funcionalidade deve chamar `ia.chamada.chamar_ia`. O service de negocio monta `PedidoIA` e decide o que fazer com `RespostaIA`; views apenas convertem erros em mensagens.
