@@ -1,9 +1,34 @@
 ---
 name: app-ia
-description: Padroes do app de IA do Feirao Motors para chamadas, provedores, cotas, auditoria, arquivos e configuracao.
+description: "Use ao implementar ou revisar chamadas de IA no Feirao Motors: cobre a porta unica, providers, cotas, auditoria, arquivos, configuracao e respostas estruturadas."
 ---
 
 # App IA
+
+## Estrutura da skill
+
+Toda skill deve ter um `SKILL.md` com frontmatter YAML no início. Os campos
+obrigatórios e portáveis são:
+
+- `name`: identificador em minúsculas, usando hífens e sem espaços;
+- `description`: frase que explica quando a skill é relevante e permite que o
+	agente decida se deve carregá-la.
+
+Uma skill pode crescer sem deixar o `SKILL.md` monolítico:
+
+```text
+app-ia/
+|-- SKILL.md          # obrigatorio: metadados e instrucoes principais
+|-- scripts/          # opcional: scripts executaveis da skill
+|-- references/       # opcional: documentacao longa de apoio
+`-- assets/           # opcional: modelos e arquivos auxiliares
+```
+
+Só adicione `scripts/`, `references/` ou `assets/` quando houver material que
+seja carregado sob demanda pela skill. Não coloque segredos nesses diretórios.
+
+Campos opcionais dependem da ferramenta que carrega a skill. Não remova os
+campos portáveis `name` e `description` ao adicionar metadados específicos.
 
 ## Entrada unica
 
