@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     ConfiguracaoIAUsuariosView,
     ConfiguracaoIAView,
+    GeminiChatClearView,
     GeminiChatAjaxView,
     GeminiChatView,
     MeuConsumoIAView,
@@ -13,6 +14,7 @@ from .views import (
 
 urlpatterns = [
     path("gemini/", GeminiChatView, name="gemini-chat"),
+    path("gemini/limpar/", GeminiChatClearView, name="gemini-chat-clear"),
     path("gemini/api/", GeminiChatAjaxView, name="gemini-chat-api"),
     path("configuracao-ia/", ConfiguracaoIAView, name="configuracao-ia"),
     path(

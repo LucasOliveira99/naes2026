@@ -4,6 +4,7 @@ import os
 import time
 from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
+from pathlib import Path
 from typing import Any, Literal
 from datetime import timedelta
 from zoneinfo import ZoneInfo
@@ -23,12 +24,15 @@ from ia.models import ConfiguracaoIA, ConfiguracaoIAUsuario, ConsumoIA, Requisic
 
 load_dotenv()
 
-PROMPT_VERSION = "feirao-v1"
+PROMPT_VERSION = "feirao-v2"
 logger = logging.getLogger(__name__)
 CONFIG_CACHE_KEY = "configuracao_ia:atual"
 CONFIG_CACHE_SECONDS = 30
 _client_cache_signature = None
 _client_cache = None
+SYSTEM_INSTRUCTION = (
+	Path(__file__).resolve().parent.parent / "contexto_projeto.md"
+).read_text(encoding="utf-8").strip()
 
 
 class CotaIAExcedida(Exception):
@@ -44,17 +48,6 @@ def _decimal_env(name):
 		return Decimal(os.environ[name])
 	except (KeyError, InvalidOperation):
 		return None
-
-
-SYSTEM_INSTRUCTION = (
-	"Voce e o assistente tecnico do Feirao Motors, uma plataforma de gestao de "
-	"feiroes, veiculos, vendedores, propostas e negociacoes. Responda em portugues "
-	"do Brasil, com clareza e objetividade. Use somente as informacoes fornecidas "
-	"na conversa; quando faltarem dados, deixe isso claro e faca perguntas de "
-	"esclarecimento. Nao invente precos, disponibilidade, clientes ou dados de "
-	"propostas. Oriente o usuario com seguranca e nunca solicite ou revele chaves, "
-	"senhas ou outras credenciais."
-)
 
 
 def get_configuracao_ia():

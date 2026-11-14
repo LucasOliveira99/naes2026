@@ -10,6 +10,7 @@ MARKDOWN_TAGS_PERMITIDAS = {
     "code", "pre", "h1", "h2", "h3", "h4", "hr", "table", "thead",
     "tbody", "tr", "th", "td",
 }
+MAX_CHAT_MESSAGES = 5
 
 
 def renderizar_markdown_seguro(texto):
@@ -32,7 +33,7 @@ def responder_chat(*, usuario, mensagem, historico):
             texto=mensagem,
             historico=[
                 MensagemIA(role=item["role"], texto=item["text"])
-                for item in historico[-5:]
+                for item in historico[-(MAX_CHAT_MESSAGES - 1):]
             ],
         )
 

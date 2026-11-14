@@ -548,6 +548,30 @@ class GeminiChatAjaxTest(TestCase):
         self.assertEqual(len(conversa.mensagens), 2)
         self.assertEqual(conversa.mensagens[0]["text"], "Olá")
 
+    def test_tela_carrega_historico_do_banco_e_usa_endpoint_json(self):
+        usuario = User.objects.create_user(username="usuario")
+        ConversaIA.objects.create(
+            usuario=usuario,
+            mensagens=[
+                {"role": "user", "text": "Pergunta salva"},
+                {"role": "model", "text": "**Resposta salva**"},
+            ],
+        )
+        self.client.force_login(usuario)
+
+        resposta = self.client.get(reverse("gemini-chat"))
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, "Pergunta salva")
+        self.assertContains(
+            resposta,
+            "<p><strong>Resposta salva</strong></p>",
+            html=True,
+        )
+        self.assertContains(resposta, reverse("gemini-chat-api"))
+        self.assertContains(resposta, 'data-ajax-chat="true"')
+        self.assertContains(resposta, "fetch(form.action")
+
     def test_endpoint_nao_acessa_conversa_de_outro_usuario(self):
         usuario = User.objects.create_user(username="usuario")
         outro_usuario = User.objects.create_user(username="outro-usuario")
@@ -572,7 +596,7 @@ class GeminiChatAjaxTest(TestCase):
         )
 
     @patch("ia.services.chamar_ia")
-    def test_service_envia_apenas_as_cinco_mensagens_mais_recentes(self, chamar_ia_mock):
+    def test_service_limita_a_cinco_mensagens_incluindo_a_atual(self, chamar_ia_mock):
         historico = [
             {"role": "user", "text": f"Mensagem {numero}"}
             for numero in range(7)
@@ -585,10 +609,25 @@ class GeminiChatAjaxTest(TestCase):
         )
 
         pedido = chamar_ia_mock.call_args.kwargs["montar_pedido"]()
+        self.assertIn(
+            "O assistente nao recebe acesso direto ao banco de dados",
+            pedido.instrucoes,
+        )
+        mensagens_enviadas = [
+            mensagem.texto for mensagem in pedido.historico
+        ] + [pedido.texto]
         self.assertEqual(
             [mensagem.texto for mensagem in pedido.historico],
-            ["Mensagem 2", "Mensagem 3", "Mensagem 4", "Mensagem 5", "Mensagem 6"],
+            ["Mensagem 3", "Mensagem 4", "Mensagem 5", "Mensagem 6"],
         )
+        self.assertEqual(mensagens_enviadas, [
+            "Mensagem 3",
+            "Mensagem 4",
+            "Mensagem 5",
+            "Mensagem 6",
+            "Nova mensagem",
+        ])
+        self.assertLessEqual(len(mensagens_enviadas), 5)
 
 
 class IAAdminGroupAccessTest(TestCase):

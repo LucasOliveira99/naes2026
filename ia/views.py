@@ -53,14 +53,9 @@ def ConfiguracaoIAView(request):
 
 
 @login_required
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET"])
 def GeminiChatView(request):
     conversa = ConversaIA.objects.filter(usuario=request.user).first()
-    if request.method == "POST" and request.POST.get("action") == "clear":
-        if conversa:
-            conversa.delete()
-        return redirect("gemini-chat")
-
     historico = conversa.mensagens if conversa else []
     historico = [
         {
@@ -77,6 +72,15 @@ def GeminiChatView(request):
         "history": historico,
         "conversation_id": conversa.pk if conversa else "",
     })
+
+
+@login_required
+@require_http_methods(["POST"])
+def GeminiChatClearView(request):
+    conversa = ConversaIA.objects.filter(usuario=request.user).first()
+    if conversa:
+        conversa.delete()
+    return redirect("gemini-chat")
 
 
 @login_required
