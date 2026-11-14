@@ -4,6 +4,8 @@ from django.views.generic.list import ListView
 
 # Buscar a rota da url pelo name dela (urls.py)
 from django.urls import reverse_lazy
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import Filial, Vendedor, CategoriaVeiculo, Etapa, Feirao, Veiculo, Proposta, Negociacao
 from .filters import (
@@ -30,6 +32,19 @@ class BaseLoginMixin(LoginRequiredMixin):
     login_url = reverse_lazy('login')  
 
 
+class MensagemFormularioSucessoMixin(SuccessMessageMixin):
+    success_message = "Operação realizada com sucesso."
+
+
+class MensagemExclusaoSucessoMixin:
+    success_message = "Registro excluído com sucesso."
+
+    def delete(self, request, *args, **kwargs):
+        response = super().delete(request, *args, **kwargs)
+        messages.success(request, self.success_message)
+        return response
+
+
 class FilteredListMixin:
     filterset_class = None
 
@@ -47,7 +62,7 @@ class FilteredListMixin:
         return context
 
 
-class FilialCreate(GroupRequiredMixin, CreateView):
+class FilialCreate(MensagemFormularioSucessoMixin, GroupRequiredMixin, CreateView):
     group_required = ['Administrador']
     model = Filial
     fields = ['nome']
@@ -59,7 +74,7 @@ class FilialCreate(GroupRequiredMixin, CreateView):
     }
 
 
-class FilialUpdate(GroupRequiredMixin, UpdateView):
+class FilialUpdate(MensagemFormularioSucessoMixin, GroupRequiredMixin, UpdateView):
     group_required = ['Administrador']
     model = Filial
     fields = ['nome']
@@ -71,7 +86,7 @@ class FilialUpdate(GroupRequiredMixin, UpdateView):
     }
 
 
-class FilialDelete(GroupRequiredMixin, DeleteView):
+class FilialDelete(MensagemExclusaoSucessoMixin, GroupRequiredMixin, DeleteView):
     group_required = ['Administrador']
     model = Filial
     template_name = 'veiculos/form.html'
@@ -98,7 +113,7 @@ class FilialDetail(BaseLoginMixin, DetailView):
 #########################################################
 
 
-class CategoriaCreate(GroupRequiredMixin, CreateView):
+class CategoriaCreate(MensagemFormularioSucessoMixin, GroupRequiredMixin, CreateView):
     group_required = ['Administrador']
     model = CategoriaVeiculo
     fields = ['nome']
@@ -110,7 +125,7 @@ class CategoriaCreate(GroupRequiredMixin, CreateView):
     }
 
 
-class CategoriaUpdate(GroupRequiredMixin, UpdateView):
+class CategoriaUpdate(MensagemFormularioSucessoMixin, GroupRequiredMixin, UpdateView):
     group_required = ['Administrador']
     model = CategoriaVeiculo
     fields = ['nome']
@@ -122,7 +137,7 @@ class CategoriaUpdate(GroupRequiredMixin, UpdateView):
     }
 
 
-class CategoriaDelete(GroupRequiredMixin, DeleteView):
+class CategoriaDelete(MensagemExclusaoSucessoMixin, GroupRequiredMixin, DeleteView):
     group_required = ['Administrador']
     model = CategoriaVeiculo
     template_name = 'veiculos/form.html'
@@ -152,7 +167,7 @@ class CategoriaDetail(BaseLoginMixin, DetailView):
 #########################################################
 
 
-class EtapaCreate(GroupRequiredMixin, CreateView):
+class EtapaCreate(MensagemFormularioSucessoMixin, GroupRequiredMixin, CreateView):
     group_required = ['Administrador']
     model = Etapa
     fields = ['nome', 'sequencia', 'quantidade_negociacoes']
@@ -165,7 +180,7 @@ class EtapaCreate(GroupRequiredMixin, CreateView):
     }
 
 
-class EtapaUpdate(GroupRequiredMixin, UpdateView):
+class EtapaUpdate(MensagemFormularioSucessoMixin, GroupRequiredMixin, UpdateView):
     group_required = ['Administrador']
     model = Etapa
     fields = ['nome', 'sequencia', 'quantidade_negociacoes']
@@ -177,7 +192,7 @@ class EtapaUpdate(GroupRequiredMixin, UpdateView):
     }
 
 
-class EtapaDelete(GroupRequiredMixin, DeleteView):
+class EtapaDelete(MensagemExclusaoSucessoMixin, GroupRequiredMixin, DeleteView):
     group_required = ['Administrador']
     model = Etapa
     template_name = 'veiculos/form.html'
@@ -202,7 +217,7 @@ class EtapaDetail(GroupRequiredMixin, DetailView):
     template_name = 'veiculos/detail/etapa.html'
 
 
-class VendedorCreate(BaseLoginMixin, CreateView):
+class VendedorCreate(MensagemFormularioSucessoMixin, BaseLoginMixin, CreateView):
     model = Vendedor
     fields = ['nome', 'matricula', 'filial', 'usuario']
     template_name = 'veiculos/form.html'
@@ -213,7 +228,7 @@ class VendedorCreate(BaseLoginMixin, CreateView):
     }
 
 
-class VendedorUpdate(GroupRequiredMixin, UpdateView):
+class VendedorUpdate(MensagemFormularioSucessoMixin, GroupRequiredMixin, UpdateView):
     group_required = ['Administrador', 'Organização']
     model = Vendedor
     fields = ['nome', 'matricula', 'filial', 'usuario']
@@ -225,7 +240,7 @@ class VendedorUpdate(GroupRequiredMixin, UpdateView):
     }
 
 
-class VendedorDelete(GroupRequiredMixin, DeleteView):
+class VendedorDelete(MensagemExclusaoSucessoMixin, GroupRequiredMixin, DeleteView):
     group_required = ['Administrador']
     model = Vendedor
     template_name = 'veiculos/form.html'
@@ -255,7 +270,7 @@ class VendedorDetail(GroupRequiredMixin, DetailView):
 ##########################################################
 
 
-class FeiraoCreate(GroupRequiredMixin, CreateView):
+class FeiraoCreate(MensagemFormularioSucessoMixin, GroupRequiredMixin, CreateView):
     group_required = ['Administrador', 'Organização']
     model = Feirao
     fields = ['nome', 'filial', 'data', 'data_limite_propostas', 'categorias']
@@ -280,7 +295,7 @@ class FeiraoCreate(GroupRequiredMixin, CreateView):
         return url_sucesso
 
 
-class FeiraoUpdate(GroupRequiredMixin, UpdateView):
+class FeiraoUpdate(MensagemFormularioSucessoMixin, GroupRequiredMixin, UpdateView):
     group_required = ['Administrador', 'Organização']
     model = Feirao
     fields = ['nome', 'filial', 'data', 'data_limite_propostas', 'categorias', 'cadastrado_por']
@@ -296,7 +311,7 @@ class FeiraoUpdate(GroupRequiredMixin, UpdateView):
         return super().get_queryset().filter(cadastrado_por=self.request.user)
 
 
-class FeiraoDelete(GroupRequiredMixin, DeleteView):
+class FeiraoDelete(MensagemExclusaoSucessoMixin, GroupRequiredMixin, DeleteView):
     group_required = ['Administrador']
     model = Feirao
     template_name = 'veiculos/form.html'
@@ -339,7 +354,7 @@ class FeiraoDetail(BaseLoginMixin, DetailView):
 ##########################################################
 
 
-class VeiculoCreate(BaseLoginMixin, CreateView):
+class VeiculoCreate(MensagemFormularioSucessoMixin, BaseLoginMixin, CreateView):
     model = Veiculo
     fields = ['marca', 'modelo', 'ano', 'valor', 'categoria', 'feirao']
     template_name = 'veiculos/form.html'
@@ -350,7 +365,7 @@ class VeiculoCreate(BaseLoginMixin, CreateView):
     }
 
 
-class VeiculoUpdate(BaseLoginMixin, UpdateView):
+class VeiculoUpdate(MensagemFormularioSucessoMixin, BaseLoginMixin, UpdateView):
     model = Veiculo
     fields = ['marca', 'modelo', 'ano', 'valor', 'categoria', 'feirao']
     template_name = 'veiculos/form.html'
@@ -361,7 +376,7 @@ class VeiculoUpdate(BaseLoginMixin, UpdateView):
     }
 
 
-class VeiculoDelete(BaseLoginMixin, DeleteView):
+class VeiculoDelete(MensagemExclusaoSucessoMixin, BaseLoginMixin, DeleteView):
     model = Veiculo
     template_name = 'veiculos/form.html'
     success_url = reverse_lazy('veiculo-list')
@@ -386,7 +401,7 @@ class VeiculoDetail(BaseLoginMixin, DetailView):
     template_name = 'veiculos/detail/veiculo.html'
 
 
-class PropostaCreate(BaseLoginMixin, CreateView):
+class PropostaCreate(MensagemFormularioSucessoMixin, BaseLoginMixin, CreateView):
     model = Proposta
     fields = ['nome_equipe', 'vendedores', 'feirao', 'categoria', 'proposta_por']
     template_name = 'veiculos/form.html'
@@ -397,7 +412,7 @@ class PropostaCreate(BaseLoginMixin, CreateView):
     }
 
 
-class PropostaUpdate(BaseLoginMixin, UpdateView):
+class PropostaUpdate(MensagemFormularioSucessoMixin, BaseLoginMixin, UpdateView):
     model = Proposta
     fields = ['nome_equipe', 'vendedores', 'feirao', 'categoria', 'aprovada', 'aprovada_em', 'proposta_por']
     template_name = 'veiculos/form.html'
@@ -408,7 +423,7 @@ class PropostaUpdate(BaseLoginMixin, UpdateView):
     }
 
 
-class PropostaDelete(BaseLoginMixin, DeleteView):
+class PropostaDelete(MensagemExclusaoSucessoMixin, BaseLoginMixin, DeleteView):
     model = Proposta
     template_name = 'veiculos/form.html'
     success_url = reverse_lazy('proposta-list')
@@ -433,7 +448,7 @@ class PropostaDetail(BaseLoginMixin, DetailView):
     template_name = 'veiculos/detail/proposta.html'
 
 
-class NegociacaoCreate(GroupRequiredMixin, CreateView):
+class NegociacaoCreate(MensagemFormularioSucessoMixin, GroupRequiredMixin, CreateView):
     group_required = ['Administrador', 'Organização']
     model = Negociacao
     fields = ['proposta_1', 'proposta_2', 'veiculo', 'data_hora', 'etapa', 'categoria', 'proposta_vencedora', 'valor_fechado', 'cadastrado_por']
@@ -445,7 +460,7 @@ class NegociacaoCreate(GroupRequiredMixin, CreateView):
     }
 
 
-class NegociacaoUpdate(GroupRequiredMixin, UpdateView):
+class NegociacaoUpdate(MensagemFormularioSucessoMixin, GroupRequiredMixin, UpdateView):
     group_required = ['Administrador', 'Organização']
     model = Negociacao
     fields = ['proposta_1', 'proposta_2', 'veiculo', 'data_hora', 'etapa', 'categoria', 'proposta_vencedora', 'valor_fechado', 'cadastrado_por']
@@ -457,7 +472,7 @@ class NegociacaoUpdate(GroupRequiredMixin, UpdateView):
     }
 
 
-class NegociacaoDelete(GroupRequiredMixin, DeleteView):
+class NegociacaoDelete(MensagemExclusaoSucessoMixin, GroupRequiredMixin, DeleteView):
     group_required = ['Administrador', 'Organização']
     model = Negociacao
     template_name = 'veiculos/form.html'

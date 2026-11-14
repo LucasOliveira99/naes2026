@@ -255,6 +255,20 @@ class HomePublicaTest(TestCase):
                 reverse("categoria-detail", kwargs={"pk": categoria.pk}),
             )
 
+    def test_cadastro_de_filial_exibe_mensagem_de_sucesso(self):
+        grupo_administrador = Group.objects.create(name="Administrador")
+        usuario = User.objects.create_user(username="administrador")
+        usuario.groups.add(grupo_administrador)
+        self.client.force_login(usuario)
+
+        resposta = self.client.post(
+            reverse("filial-create"),
+            {"nome": "Filial com mensagem"},
+            follow=True,
+        )
+
+        self.assertContains(resposta, "Operação realizada com sucesso.")
+
     def test_etapa_rejeita_valores_numericos_negativos(self):
         grupo_administrador = Group.objects.create(name="Administrador")
         usuario = User.objects.create_user(
