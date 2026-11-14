@@ -6,6 +6,16 @@ from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 
 from .models import Filial, Vendedor, CategoriaVeiculo, Etapa, Feirao, Veiculo, Proposta, Negociacao
+from .filters import (
+    CategoriaVeiculoFilter,
+    EtapaFilter,
+    FeiraoFilter,
+    FilialFilter,
+    NegociacaoFilter,
+    PropostaFilter,
+    VeiculoFilter,
+    VendedorFilter,
+)
 
 # Importar o BaseLoginMixin para proteger as views
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,6 +28,23 @@ from braces.views import GroupRequiredMixin
 class BaseLoginMixin(LoginRequiredMixin):
     # define o redirecionamento caso o usuário não esteja autenticado ao acessar a view
     login_url = reverse_lazy('login')  
+
+
+class FilteredListMixin:
+    filterset_class = None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = self.filterset_class(
+            data=self.request.GET,
+            queryset=queryset,
+        )
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter"] = self.filterset
+        return context
 
 
 class FilialCreate(GroupRequiredMixin, CreateView):
@@ -55,10 +82,11 @@ class FilialDelete(GroupRequiredMixin, DeleteView):
     }
 
 
-class FilialList(BaseLoginMixin, ListView):
+class FilialList(FilteredListMixin, BaseLoginMixin, ListView):
     model = Filial
     template_name = 'veiculos/list/filial.html'
     paginate_by = 30
+    filterset_class = FilialFilter
 
 
 class FilialDetail(BaseLoginMixin, DetailView):
@@ -105,10 +133,11 @@ class CategoriaDelete(GroupRequiredMixin, DeleteView):
     }
 
 
-class CategoriaList(BaseLoginMixin, ListView):
+class CategoriaList(FilteredListMixin, BaseLoginMixin, ListView):
     model = CategoriaVeiculo
     template_name = 'veiculos/list/categoria.html'
     paginate_by = 30
+    filterset_class = CategoriaVeiculoFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -159,11 +188,12 @@ class EtapaDelete(GroupRequiredMixin, DeleteView):
     }
 
 
-class EtapaList(GroupRequiredMixin, ListView):
+class EtapaList(FilteredListMixin, GroupRequiredMixin, ListView):
     group_required = ['Administrador']
     model = Etapa
     template_name = 'veiculos/list/etapa.html'
     paginate_by = 30
+    filterset_class = EtapaFilter
 
 
 class EtapaDetail(GroupRequiredMixin, DetailView):
@@ -206,11 +236,12 @@ class VendedorDelete(GroupRequiredMixin, DeleteView):
     }
 
 
-class VendedorList(GroupRequiredMixin, ListView):
+class VendedorList(FilteredListMixin, GroupRequiredMixin, ListView):
     group_required = ['Administrador', 'Organização']
     model = Vendedor
     template_name = 'veiculos/list/vendedor.html'
     paginate_by = 30
+    filterset_class = VendedorFilter
 
     def get_queryset(self):
         return super().get_queryset().select_related('filial')
@@ -279,10 +310,11 @@ class FeiraoDelete(GroupRequiredMixin, DeleteView):
         return super().get_queryset().filter(cadastrado_por=self.request.user)
 
 
-class FeiraoList(BaseLoginMixin, ListView):
+class FeiraoList(FilteredListMixin, BaseLoginMixin, ListView):
     model = Feirao
     template_name = 'veiculos/list/feirao.html'
     paginate_by = 30
+    filterset_class = FeiraoFilter
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -336,10 +368,11 @@ class VeiculoDelete(BaseLoginMixin, DeleteView):
     }
 
 
-class VeiculoList(BaseLoginMixin, ListView):
+class VeiculoList(FilteredListMixin, BaseLoginMixin, ListView):
     model = Veiculo
     template_name = 'veiculos/list/veiculo.html'
     paginate_by = 30
+    filterset_class = VeiculoFilter
 
     def get_queryset(self):
         return super().get_queryset().select_related('categoria', 'feirao')
@@ -382,10 +415,11 @@ class PropostaDelete(BaseLoginMixin, DeleteView):
     }
 
 
-class PropostaList(BaseLoginMixin, ListView):
+class PropostaList(FilteredListMixin, BaseLoginMixin, ListView):
     model = Proposta
     template_name = 'veiculos/list/proposta.html'
     paginate_by = 30
+    filterset_class = PropostaFilter
 
     def get_queryset(self):
         return super().get_queryset().select_related('feirao', 'categoria')
@@ -431,10 +465,11 @@ class NegociacaoDelete(GroupRequiredMixin, DeleteView):
     }
 
 
-class NegociacaoList(ListView):
+class NegociacaoList(FilteredListMixin, ListView):
     model = Negociacao
     template_name = 'veiculos/list/negociacao.html'
     paginate_by = 30
+    filterset_class = NegociacaoFilter
 
     def get_queryset(self):
         return super().get_queryset().select_related(
