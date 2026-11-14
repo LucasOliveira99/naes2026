@@ -1,0 +1,69 @@
+{% extends "website/modelo2.html" %}
+
+{% block title %}Configuracao da IA - Feirao Motors{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active">Configuracao da IA</li>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-xl-10">
+    <div class="mb-4">
+      <p class="text-uppercase small fw-semibold text-primary mb-1">Acesso restrito</p>
+      <h1 class="stencil mb-1">Configuracao da IA</h1>
+      <p class="text-muted mb-0">As alteracoes passam a valer em ate 30 segundos.</p>
+    </div>
+
+    <form method="post" class="card border-0 shadow-sm">
+      {% csrf_token %}
+      <div class="card-body p-4">
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <h5 class="stencil mb-3">Acesso ao Gemini</h5>
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">{{ form.acesso.label_tag }}{{ form.acesso }}{{ form.acesso.errors }}</div>
+          <div class="col-md-8">{{ form.api_key.label_tag }}{{ form.api_key }}<small class="form-text text-muted">Usada somente no modo API Key. Deixe vazia para manter a chave atual.</small>{{ form.api_key.errors }}</div>
+          <div class="col-md-8">{{ form.projeto_gcp.label_tag }}{{ form.projeto_gcp }}<small class="form-text text-muted">Usado somente no modo Enterprise.</small>{{ form.projeto_gcp.errors }}</div>
+          <div class="col-md-4">{{ form.regiao.label_tag }}{{ form.regiao }}<small class="form-text text-muted">Usada somente no modo Enterprise.</small>{{ form.regiao.errors }}</div>
+        </div>
+
+        <h5 class="stencil mb-3">Modelo e limites de resposta</h5>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">{{ form.provedor.label_tag }}{{ form.provedor }}{{ form.provedor.errors }}</div>
+          <div class="col-md-6">{{ form.modelo.label_tag }}{{ form.modelo }}{{ form.modelo.errors }}</div>
+          <div class="col-md-3">{{ form.temperatura.label_tag }}{{ form.temperatura }}{{ form.temperatura.errors }}</div>
+          <div class="col-md-3">{{ form.max_output_tokens.label_tag }}{{ form.max_output_tokens }}{{ form.max_output_tokens.errors }}</div>
+          <div class="col-md-3">{{ form.nivel_raciocinio.label_tag }}{{ form.nivel_raciocinio }}{{ form.nivel_raciocinio.errors }}</div>
+          <div class="col-md-3">{{ form.tentativas.label_tag }}{{ form.tentativas }}{{ form.tentativas.errors }}</div>
+          <div class="col-md-3">{{ form.timeout_segundos.label_tag }}{{ form.timeout_segundos }}{{ form.timeout_segundos.errors }}</div>
+        </div>
+
+        <h5 class="stencil mb-3">Cotas e protecao</h5>
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">{{ form.limite_tokens_padrao.label_tag }}{{ form.limite_tokens_padrao }}{{ form.limite_tokens_padrao.errors }}</div>
+          <div class="col-md-3">{{ form.aviso_percentual.label_tag }}{{ form.aviso_percentual }}{{ form.aviso_percentual.errors }}</div>
+          <div class="col-md-3">{{ form.reserva_minima_tokens.label_tag }}{{ form.reserva_minima_tokens }}{{ form.reserva_minima_tokens.errors }}</div>
+          <div class="col-md-3">{{ form.teto_mensal_sistema.label_tag }}{{ form.teto_mensal_sistema }}<small class="form-text text-muted">Zero desliga o teto global.</small>{{ form.teto_mensal_sistema.errors }}</div>
+          <div class="col-md-3">{{ form.max_arquivo_bytes.label_tag }}{{ form.max_arquivo_bytes }}{{ form.max_arquivo_bytes.errors }}</div>
+          <div class="col-md-3">{{ form.max_paginas_pdf.label_tag }}{{ form.max_paginas_pdf }}{{ form.max_paginas_pdf.errors }}</div>
+          <div class="col-md-3">{{ form.retencao_dias.label_tag }}{{ form.retencao_dias }}{{ form.retencao_dias.errors }}</div>
+        </div>
+
+        <h5 class="stencil mb-3">Precos estimados</h5>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">{{ form.preco_entrada_milhao.label_tag }}{{ form.preco_entrada_milhao }}{{ form.preco_entrada_milhao.errors }}</div>
+          <div class="col-md-6">{{ form.preco_saida_milhao.label_tag }}{{ form.preco_saida_milhao }}{{ form.preco_saida_milhao.errors }}</div>
+        </div>
+
+        <div class="d-flex gap-2 justify-content-end">
+          <button type="submit" name="action" value="testar" class="btn btn-outline-primary"><i class="bi bi-plug me-1"></i>Testar conexao</button>
+          <button type="submit" name="action" value="salvar" class="btn btn-primary"><i class="bi bi-check2 me-1"></i>Salvar configuracao</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

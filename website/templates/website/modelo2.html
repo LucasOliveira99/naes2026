@@ -67,6 +67,15 @@
             </a>
           </li>
 
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'gemini-chat' %}active{% endif %}"
+              href="{% url 'gemini-chat' %}">
+              <i class="bi bi-stars"></i>Assistente IA
+            </a>
+          </li>
+          {% endif %}
+
           {% comment %} Verifica se o usuário está autenticado {% endcomment %}
           {% if request.user.is_authenticated %}
           <!-- Dropdown Cadastro -->
@@ -141,6 +150,16 @@
               </span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
+              {% if request.user.is_superuser %}
+              <li>
+                <a class="dropdown-item" href="{% url 'configuracao-ia' %}">
+                  <i class="bi bi-sliders2 me-2"></i>Configuração da IA
+                </a>
+              </li>
+              <li><a class="dropdown-item" href="{% url 'requisicoes-ia' %}"><i class="bi bi-clipboard-data me-2"></i>Requisições de IA</a></li>
+              <li><a class="dropdown-item" href="{% url 'configuracao-ia-usuarios' %}"><i class="bi bi-people me-2"></i>IA por usuário</a></li>
+              {% endif %}
+              <li><a class="dropdown-item" href="{% url 'meu-consumo-ia' %}"><i class="bi bi-bar-chart me-2"></i>Meu consumo de IA</a></li>
               <li>
                 <a class="dropdown-item" href="{% url 'alterar-senha' %}">
                   <i class="bi bi-person-lock"></i> Alterar Senha

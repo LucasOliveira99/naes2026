@@ -1,0 +1,11 @@
+{% extends "website/modelo2.html" %}
+
+{% block title %}Meu consumo de IA - Feirao Motors{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Meu consumo</li>{% endblock %}
+
+{% block content %}
+<div class="mb-4"><p class="text-uppercase small fw-semibold text-primary mb-1">Cota mensal</p><h1 class="stencil mb-1">Meu consumo de IA</h1><p class="text-muted mb-0">Renova em {{ renova_em|date:"d/m/Y" }}.</p></div>
+{% if not ia_ligada %}<div class="alert alert-warning"><i class="bi bi-pause-circle me-2"></i>A IA está desligada para sua conta.</div>{% endif %}
+<div class="row g-4 mb-4"><div class="col-md-8"><div class="card border-0 shadow-sm"><div class="card-body p-4"><div class="d-flex justify-content-between mb-2"><span>Tokens usados</span><strong>{{ usado }} / {{ limite }}</strong></div><div class="progress" role="progressbar" aria-valuenow="{{ percentual }}" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar bg-primary" style="width: {{ percentual }}%"></div></div><p class="text-muted small mt-2 mb-0">Restante: {{ restante }} tokens</p></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><p class="text-muted mb-1">Mes atual</p><h2 class="stencil">{{ consumo.tokens_total|default:0 }}</h2><p class="text-muted mb-0">tokens consumidos</p></div></div></div></div>
+<div class="card border-0 shadow-sm"><div class="card-body"><h5 class="stencil">Ultimas chamadas</h5><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Quando</th><th>Finalidade</th><th>Situacao</th><th>Tokens</th></tr></thead><tbody>{% for item in ultimas %}<tr><td>{{ item.criada_em|date:"d/m/Y H:i" }}</td><td>{{ item.finalidade }}</td><td>{{ item.get_situacao_display }}</td><td>{{ item.tokens_total }}</td></tr>{% empty %}<tr><td colspan="4" class="text-muted">Nenhuma chamada registrada.</td></tr>{% endfor %}</tbody></table></div></div></div>
+{% endblock %}

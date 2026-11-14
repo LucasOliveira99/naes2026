@@ -1,0 +1,19 @@
+{% extends "website/modelo2.html" %}
+
+{% block title %}Requisicoes de IA - Feirao Motors{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active">Requisicoes de IA</li>{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-end justify-content-between gap-3 mb-4">
+  <div><p class="text-uppercase small fw-semibold text-primary mb-1">Superusuario</p><h1 class="stencil mb-1">Requisicoes de IA</h1><p class="text-muted mb-0">Auditoria de cada tentativa, sem edicao.</p></div>
+</div>
+<form method="get" class="card border-0 shadow-sm mb-4"><div class="card-body"><div class="row g-2 align-items-end">
+  <div class="col-md-3"><label class="form-label" for="usuario">Usuario</label><input class="form-control" id="usuario" name="usuario" value="{{ filtros.usuario }}"></div>
+  <div class="col-md-2"><label class="form-label" for="situacao">Situacao</label><select class="form-select" id="situacao" name="situacao"><option value="">Todas</option>{% for valor,nome in situacoes %}<option value="{{ valor }}" {% if filtros.situacao == valor %}selected{% endif %}>{{ nome }}</option>{% endfor %}</select></div>
+  <div class="col-md-2"><label class="form-label" for="finalidade">Finalidade</label><input class="form-control" id="finalidade" name="finalidade" value="{{ filtros.finalidade }}"></div>
+  <div class="col-md-2"><label class="form-label" for="de">De</label><input class="form-control" type="date" id="de" name="de" value="{{ filtros.de }}"></div>
+  <div class="col-md-2"><label class="form-label" for="ate">Ate</label><input class="form-control" type="date" id="ate" name="ate" value="{{ filtros.ate }}"></div>
+  <div class="col-md-1"><button class="btn btn-primary w-100" title="Filtrar"><i class="bi bi-funnel"></i></button></div>
+</div></div></form>
+<div class="row g-4 mb-4"><div class="col-lg-7"><div class="card border-0 shadow-sm"><div class="card-body"><h5 class="stencil">Ultimas tentativas</h5><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Quando</th><th>Usuario</th><th>Situacao</th><th>Tokens</th><th></th></tr></thead><tbody>{% for item in requisicoes %}<tr><td>{{ item.criada_em|date:"d/m/Y H:i" }}</td><td>{{ item.usuario }}</td><td><span class="badge {% if item.situacao == 'sucesso' %}text-bg-success{% elif item.situacao == 'iniciada' %}text-bg-warning{% else %}text-bg-danger{% endif %}">{{ item.get_situacao_display }}</span></td><td>{{ item.tokens_total }}</td><td><a href="{% url 'requisicao-ia-detail' item.pk %}" class="btn btn-sm btn-outline-primary" title="Detalhes"><i class="bi bi-eye"></i></a></td></tr>{% empty %}<tr><td colspan="5" class="text-muted">Nenhuma requisicao encontrada.</td></tr>{% endfor %}</tbody></table></div></div></div></div><div class="col-lg-5"><div class="card border-0 shadow-sm"><div class="card-body"><h5 class="stencil">Quem mais consumiu</h5><ol class="list-group list-group-numbered list-group-flush">{% for item in resumo %}<li class="list-group-item d-flex justify-content-between"><span>{{ item.usuario__username }}</span><strong>{{ item.tokens }}</strong></li>{% empty %}<li class="list-group-item text-muted">Sem dados no filtro.</li>{% endfor %}</ol></div></div></div></div>
+{% endblock %}

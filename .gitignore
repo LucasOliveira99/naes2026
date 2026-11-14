@@ -4,6 +4,7 @@
 
 # Credenciais locais (string de conexão do banco) — nunca commitar
 naes2026/local_settings.py
+.env
 
 # Banco local (caso volte a usar sqlite)
 db.sqlite3
